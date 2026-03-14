@@ -1,0 +1,463 @@
+
+# This file contains common pin mappings for the BigTreeTech SKR 2.
+# To use this config, the firmware should be compiled for the
+# STM32F407 with a "32KiB bootloader".
+
+# The "make flash" command does not work on the SKR 2. Instead,
+# after running "make", copy the generated "out/klipper.bin" file to a
+# file named "firmware.bin" on an SD card and then restart the SKR 2
+# with that SD card.
+
+# See docs/Config_Reference.md for a description of parameters.
+
+# Note: The initial revision of this board has a flaw that can cause
+# damage to itself and other boards. Be sure to verify the board is
+# not impacted by this flaw before using it.
+
+[duplicate_pin_override]
+pins:PB4 
+
+[respond] 
+[gcode_arcs]
+resolution: 0.1
+
+[virtual_sdcard]
+path: ~/printer_data/gcodes
+[display_status]
+#[pause_resume]
+
+[include mainsail.cfg]
+[include macros/macros.cfg]
+#[include K-ShakeTune/*.cfg]
+#[include PIS.cfg]
+
+[exclude_object]
+
+[mcu]
+serial: /dev/serial/by-id/usb-Klipper_stm32f407xx_360027001247393437363439-if00
+
+[printer]
+kinematics: corexy
+max_velocity: 300
+max_accel: 7000
+max_z_velocity: 10
+max_z_accel: 100
+square_corner_velocity: 5.0
+
+[input_shaper]
+shaper_freq_y: 44.8  
+shaper_freq_x: 70.2
+shaper_type: mzv
+
+[temperature_sensor raspberry_pi]
+sensor_type: temperature_host
+min_temp: 10
+max_temp: 100
+
+[temperature_sensor mcu_temp]
+sensor_type: temperature_mcu
+min_temp: 0
+max_temp: 100
+
+[temperature_sensor Chamber]
+sensor_type: EPCOS 100K B57560G104F
+Sensor_pin: PA3
+
+[stepper_x]
+step_pin: PE2
+dir_pin: !PE1
+enable_pin: !PE3
+microsteps: 32
+rotation_distance: 40
+endstop_pin: ^PC1
+position_endstop: 395
+position_max: 395
+position_min: -20
+homing_speed: 50
+homing_retract_dist: 0
+
+[stepper_y]
+step_pin: PD5
+dir_pin: !PD4
+enable_pin: !PD6
+microsteps: 32
+rotation_distance: 40
+endstop_pin: ^PC3
+position_endstop: 386
+position_max: 386
+position_min: -10
+homing_speed: 50
+homing_retract_dist: 0
+
+[stepper_z]
+step_pin: PA15
+dir_pin: !PA8
+enable_pin: !PD1
+microsteps: 16
+rotation_distance: 4
+full_steps_per_rotation: 200
+endstop_pin: ^PC0
+#endstop_pin: probe:z_virtual_endstop
+position_endstop: 1
+position_min: -6.5
+position_max: 400
+
+[stepper_z1]
+step_pin: PD11
+dir_pin: !PD10
+enable_pin: !PD13
+microsteps: 16
+rotation_distance: 4 
+full_steps_per_rotation: 200
+
+################################################################
+####     sHERPA MINI CONFIGS
+######################################################################
+
+[extruder]
+step_pin: PD15
+dir_pin: !PD14
+enable_pin: !PC7
+[extruder]
+rotation_distance: 22.67895 #for 5mm Shaft Driven Bondtech gearsets
+#gear_ratio: 50:10 #for standard 10t motor
+gear_ratio: 50:8 #for sherpa mini 8t motor
+microsteps: 16
+full_steps_per_rotation: 200 #1.8deg Motor
+
+max_extrude_only_distance: 1400.0
+max_extrude_only_velocity: 75.0
+max_extrude_only_accel: 1500
+max_extrude_cross_section: 5
+
+pressure_advance: 0.0225
+pressure_advance_smooth_time: 0.02
+nozzle_diameter: 0.400
+filament_diameter: 1.750
+heater_pin: PB3
+sensor_type: ATC Semitec 104NT-4-R025H42G
+sensor_pin: PA2
+#control: pid
+#pid_Kp: 22.2
+#pid_Ki: 1.08
+#pid_Kd: 114
+min_extrude_temp: 130
+min_temp: 5
+max_temp: 300
+
+###################################################################
+####     ORBITER 1.5 EXTRUDER CONFIGS
+######################################################################
+
+#[extruder]
+#step_pin: PD15
+#dir_pin: !PD14
+#enable_pin: !PC7
+#rotation_distance: 4.637
+#microsteps: 16
+#full_steps_per_rotation: 200
+#max_extrude_only_distance: 500
+#max_extrude_only_velocity: 120
+#max_extrude_only_accel: 800
+#max_extrude_cross_section: 5
+#pressure_advance: 0.0225
+#pressure_advance_smooth_time: 0.02
+#nozzle_diameter: 0.400
+#filament_diameter: 1.750
+#heater_pin: PB3
+#sensor_type: ATC Semitec 104NT-4-R025H42G
+#sensor_pin: PA2
+#control: pid
+#pid_Kp: 22.2
+#pid_Ki: 1.08
+#pid_Kd: 114
+#min_extrude_temp: 170
+#min_temp: 5
+#max_temp: 280
+
+
+#[extruder1]
+#step_pin: PD11
+#dir_pin: PD10
+#enable_pin: !PD13
+#microsteps: 16
+#heater_pin: PB4
+#sensor_pin: PA3
+#...
+
+[heater_bed]
+heater_pin: PD7
+sensor_type: EPCOS 100K B57560G104F
+sensor_pin: PA1
+#control: watermark
+min_temp: 5
+max_temp: 140
+
+[fan] #PartsFan
+pin: PB5
+
+[heater_fan Hotend_Fan] #Hotend fan
+pin: PB6
+Heater_temp: 50
+Heater: extruder
+
+[controller_fan Case_Fan]
+pin: PB4
+max_power: 1
+fan_speed: 1
+idle_timeout: 30
+idle_speed: 0.0
+stepper: stepper_x, stepper_y, stepper_z
+
+#####################################################################
+# Processor Fan Control
+#####################################################################
+#[temperature_fan processors_maximum]
+#pin: PB4                                                      # the fan control pin (must be a mosfet or a pwm fan)
+#control: watermark                                                # the type of hysteresis we are using
+#max_delta: 3.0                                                    # fan turns on/off at 3° over/under target_temp
+#sensor_type: temperature_combined                                 # new temperature type
+#sensor_list: temperature_sensor raspberry_pi, temperature_sensor mcu_temp
+#combination_method: max                                           # use the maximum reading of the sensors
+#maximum_deviation: 999.9                                          # we don't care about the difference in temperature
+#max_temp: 85                                                      # just the valid temperature ranges
+#min_temp: 0
+#target_temp: 55.0                                                 # the initial target temperature for the fan
+#max_speed: 1.0
+#min_speed: 1.0
+
+#[heater_fan fan2]
+#pin: PB5
+
+[output_pin motor_power]
+pin: PC13
+value: 1
+
+########################################
+# EXP1 / EXP2 (display) pins
+########################################
+
+[board_pins]
+aliases:
+    # EXP1 header
+    EXP1_1=PC5, EXP1_3=PB1, EXP1_5=PE10, EXP1_7=PE12, EXP1_9=<GND>,
+    EXP1_2=PB0, EXP1_4=PE9, EXP1_6=PE11, EXP1_8=PE13, EXP1_10=<5V>,
+    # EXP2 header
+    EXP2_1=PA6, EXP2_3=PE7, EXP2_5=PB2, EXP2_7=PC4,   EXP2_9=<GND>,
+    EXP2_2=PA5, EXP2_4=PA4, EXP2_6=PA7, EXP2_8=<RST>, EXP2_10=<NC>
+    
+######################################################################
+# Fysetc Mini 12864Panel v2.1 (with neopixel backlight leds)
+######################################################################
+
+[display]
+lcd_type: uc1701
+cs_pin: EXP1_3
+a0_pin: EXP1_4
+rst_pin: EXP1_5
+contrast: 63
+encoder_pins: ^EXP2_5, ^EXP2_3
+#click_pin: ^!EXP1_2
+## Some micro-controller boards may require an spi bus to be specified:
+#spi_bus: spi
+## Alternatively, some micro-controller boards may work with software spi:
+spi_software_miso_pin: EXP2_1
+spi_software_mosi_pin: EXP2_6
+spi_software_sclk_pin: EXP2_2
+
+#[output_pin beeper]
+#[pwm_cycle_time beeper]
+#pin: EXP1_1
+#value: 0
+#shutdown_value: 0
+#pwm: True#####
+#cycle_time: 0.0005 ; Default beeper tone in kHz. 1 / 0.0005 = 2000Hz (2kHz)
+
+[neopixel fysetc_mini12864]
+pin: EXP1_6
+chain_count: 3
+initial_RED: 1
+initial_GREEN: 0.0
+initial_BLUE: 0.0
+color_order: RGB
+
+
+##  Set RGB values on boot up for each Neopixel. 
+##  Index 1 = display, Index 2 and 3 = Knob
+[delayed_gcode setdisplayneopixel]
+initial_duration: 1
+gcode:
+        SET_LED LED=fysetc_mini12864 RED=1 GREEN=0 BLUE=0 INDEX=1 
+        SET_LED LED=fysetc_mini12864 RED=1 GREEN=0 BLUE=0 INDEX=2 
+        SET_LED LED=fysetc_mini12864 RED=1 GREEN=0 BLUE=0 INDEX=3 
+
+
+########################################
+# TMC2209 configuration
+########################################
+
+[tmc2209 stepper_x]
+uart_pin: PE0
+run_current: 1.4
+hold_current: 0.5
+diag_pin: PC1
+#driver_SGTHRS: 100
+interpolate: false
+#stealthchop_threshold: 0
+
+[tmc2209 stepper_y]
+uart_pin: PD3
+run_current: 1.4
+hold_current: 0.5
+diag_pin: PC3
+#driver_SGTHRS: 100
+interpolate: false
+#stealthchop_threshold: 0
+
+[tmc2209 stepper_z]
+uart_pin: PD0
+run_current: 0.680
+hold_current: 0.800
+diag_pin:PC0
+stealthchop_threshold: 999999
+
+
+[tmc2209 stepper_z1]
+uart_pin: PD12
+run_current: 0.680
+hold_current: 0.800
+diag_pin: PA0
+stealthchop_threshold: 999999
+
+[tmc2209 extruder]
+uart_pin: PC6
+run_current: 0.30
+hold_current: 0.100
+diag_pin: PC2
+#stealthchop_threshold: 999999
+interpolate: True
+
+#[tmc2209 extruder1]
+#uart_pin: PD12
+#run_current: 0.600
+#diag_pin:
+#stealthchop_threshold: 1
+
+#====================================================================
+# KLICKY_PROBE
+#====================================================================
+
+[probe]
+pin: ^PE4
+x_offset: 0
+y_offset: 30
+#z_offset: 2.702
+speed: 5
+samples: 3 
+samples_result: median
+sample_retract_dist: 2.0
+samples_tolerance: 0.06
+samples_tolerance_retries: 3
+
+#[safe_z_home]
+#home_xy_position: 355, 226
+#speed: 150
+#z_hop: 10
+#z_hop_speed: 20
+
+[bed_mesh]
+algorithm: bicubic
+mesh_pps: 3, 3
+bicubic_tension: 0.2
+speed: 200
+horizontal_move_z: 5
+mesh_min: 10, 30
+mesh_max: 360, 350
+probe_count: 9,9
+fade_end: 10
+fade_start: 1
+fade_target: 0
+zero_reference_position: 190, 190
+#relative_reference_index: 9
+
+
+[z_tilt]
+  z_positions: -20,185 # left lead screw
+               400,185 # right lead screw
+points: 35, 155
+        345,155
+speed: 200
+horizontal_move_z: 10
+retries: 20
+retry_tolerance:0.02
+
+[bed_screws]
+screw1: 40,20
+screw2: 40,280
+screw3: 320,280
+screw4: 320,20
+
+[screws_tilt_adjust]
+screw1: 35, 20
+screw1_name: front left screw
+screw2: 335, 20
+screw2_name: front right screw
+screw3: 35, 280
+screw3_name: rear right screw
+screw4: 335, 280
+screw4_name: rear left screw
+horizontal_move_z: 10.
+speed: 150.
+screw_thread: CW-M3
+
+
+
+#[firmware_retraction]
+#retract_length: 0.5
+#   The length of filament (in mm) to retract when G10 is activated,
+#   and to unretract when G11 is activated (but see
+#   unretract_extra_length below). The default is 0 mm.
+#retract_speed: 30
+#   The speed of retraction, in mm/s. The default is 20 mm/s.
+#unretract_extra_length: 0
+#   The length (in mm) of additional filament to add when
+#   unretracting.
+#unretract_speed: 30
+#   The speed of unretraction, in mm/s. The default is 10 mm/s.
+
+#*# <---------------------- SAVE_CONFIG ---------------------->
+#*# DO NOT EDIT THIS BLOCK OR BELOW. The contents are auto-generated.
+#*#
+#*# [bed_mesh default]
+#*# version = 1
+#*# points =
+#*# 	  -0.006354, -0.003854, 0.006146, 0.001146, -0.042604
+#*# 	  -0.016354, -0.020104, -0.001354, -0.020104, -0.053854
+#*# 	  -0.027604, -0.047604, -0.015104, -0.043854, -0.073854
+#*# x_count = 5
+#*# y_count = 3
+#*# mesh_x_pps = 3
+#*# mesh_y_pps = 3
+#*# algo = lagrange
+#*# tension = 0.2
+#*# min_x = 86.0
+#*# max_x = 232.0
+#*# min_y = 186.0
+#*# max_y = 226.0
+#*#
+#*# [heater_bed]
+#*# control = pid
+#*# pid_kp = 64.318
+#*# pid_ki = 0.812
+#*# pid_kd = 1273.496
+#*#
+#*# [extruder]
+#*# control = pid
+#*# pid_kp = 35.643
+#*# pid_ki = 8.194
+#*# pid_kd = 38.762
+#*#
+#*# [probe]
+#*# z_offset = 2.700
+#*#
+#*# [stepper_z]
